@@ -157,10 +157,14 @@ sub contains {
     my $_r = $s->{template}{context}->get($r);
     $l = $_l if defined $_l;
     $r = $_r if defined $_r;
-    $r = quotemeta $r;
     return if defined $r && !defined $l;
     return defined($l->{$r})       ? 1 : !1 if ref $l eq 'HASH';
-    return (grep { $_ eq $r } @$l) ? 1 : !1 if ref $l eq 'ARRAY';
+    if (ref $l eq 'ARRAY') {
+      for my $i (0 .. $#$l) {
+        return 1 if $l->[$i] eq $r;
+      }
+      return !1;
+    }
     return $l =~ qr[${r}]          ? 1 : !1;
 }
 

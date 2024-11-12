@@ -95,8 +95,20 @@ INPUT
 
 EXPECTED
 is( Template::Liquid->parse(
+        <<'INPUT')->render(email => 'test@example.com'), <<'EXPECTED', q[assigned list contains email]);
+{% assign list = "foo@bar.com, another@example.com, test@example.com" | split: ", " %}{% if list contains email %}Found.{% endif %}
+INPUT
+Found.
+EXPECTED
+is( Template::Liquid->parse(
         <<'INPUT')->render(list => [qw[some other value]]), <<'EXPECTED', q[list contains 'other']);
 {% if list contains 'other' %}Yep.{% endif %}
+INPUT
+Yep.
+EXPECTED
+is( Template::Liquid->parse(
+        <<'INPUT')->render(foo => 'bar'), <<'EXPECTED', q[assigned list  contains foo]);
+{% assign list = "a, b, c, bar" | split : ", " %}{% if list contains foo %}Yep.{% endif %}
 INPUT
 Yep.
 EXPECTED
