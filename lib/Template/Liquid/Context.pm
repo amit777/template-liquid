@@ -138,7 +138,16 @@ sub get {
 
         #	    print STDERR "DEBUG:obj property. var=$var. 1=$1,2=$2";
         my $obj = $s->get($1);
-        return $obj->{$2} if $obj;
+        my $objreftype = ref $obj;
+        return $obj->{$2} if $objreftype eq "HASH";
+
+        if($objreftype eq 'ARRAY') {
+          # resolve the scope variable into an array index
+          my $a_idx = $s->get($2);
+          # print STDERR "\nDEBUG:a_idx=$a_idx";
+          return @$obj[$a_idx] if @$obj[$a_idx];
+        }
+
         return;    # return if nothing
     }
 STEP: while (@path) {

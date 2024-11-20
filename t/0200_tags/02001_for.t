@@ -8,6 +8,12 @@ use Template::Liquid;
 $|++;
 #
 is( Template::Liquid->parse(
+        <<'TEMPLATE')->render(array => "foo,bar"), <<'EXPECTED', 'string split with index');
+{% assign items = array | split: ","  %}{% for i in (0..2) %}{{items[i]}}{%endfor%}
+TEMPLATE
+foobar
+EXPECTED
+is( Template::Liquid->parse(
         <<'TEMPLATE')->render(array => "foo,bar"), <<'EXPECTED', 'string split');
 {% assign items = array | split: ","  %}{%for item in items%}{{item}}{%endfor%}
 TEMPLATE
