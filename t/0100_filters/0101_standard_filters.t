@@ -606,7 +606,7 @@ is( Template::Liquid->parse(
     q[{{ my_array.size }} => 4]
 );
 
-# slice
+# slice string
 is(Template::Liquid->parse(q[{{ "Liquid" | slice: 0 }}])->render(),
     'L', q[{{ "Liquid" | slice: 0 }} => L]);
 is(Template::Liquid->parse(q[{{ "Liquid" | slice: 2 }}])->render(),
@@ -615,6 +615,38 @@ is(Template::Liquid->parse(q[{{ "Liquid" | slice: 2, 5 }}])->render(),
     'quid', q[{{ "Liquid" | slice: 2, 5 }} => quid]);
 is(Template::Liquid->parse(q[{{ "Liquid" | slice: -3, 2 }}])->render(),
     'ui', q[{{ "Liquid" | slice: -3, 2 }} => ui]);
+
+# slice array
+is( Template::Liquid->parse(
+        q[{% assign my_array = "zebra, octopus, giraffe, Sally Snake" | split: ", " %}{{ my_array | slice: 0 }}]
+    )->render(),
+    'zebra',
+    '{% assign my_array = "zebra, octopus, giraffe, Sally Snake" | split: ", " %}{{ my_array | slice: 0 }}'
+);
+is( Template::Liquid->parse(
+        q[{% assign my_array = "zebra, octopus, giraffe, Sally Snake" | split: ", " %}{% assign first = my_array | slice: 0 %}{{ first }}]
+    )->render(),
+    'zebra',
+    '{% assign my_array = "zebra, octopus, giraffe, Sally Snake" | split: ", " %}{% assign first = my_array | slice: 0 %}{{ first }}'
+);
+is( Template::Liquid->parse(
+        q[{% assign my_array = "zebra, octopus, giraffe, Sally Snake" | split: ", " %}{{ my_array | slice: 0,2 }}]
+    )->render(),
+    'zebraoctopus',
+    '{% assign my_array = "zebra, octopus, giraffe, Sally Snake" | split: ", " %}{{ my_array | slice: 0,2 }}'
+);
+is( Template::Liquid->parse(
+        q[{% assign my_array = "zebra, octopus, giraffe, Sally Snake" | split: ", " %}{{ my_array | slice: 1,3 }}]
+    )->render(),
+    'octopusgiraffeSally Snake',
+    '{% assign my_array = "zebra, octopus, giraffe, Sally Snake" | split: ", " %}{{ my_array | slice: 1,3 }}'
+);
+is( Template::Liquid->parse(
+        q[{% assign my_array = "zebra, octopus, giraffe, Sally Snake" | split: ", " %}{{ my_array | slice: -2,2 }}]
+    )->render(),
+    'giraffeSally Snake',
+    '{% assign my_array = "zebra, octopus, giraffe, Sally Snake" | split: ", " %}{{ my_array | slice: -2,2 }}'
+);
 
 # sort
 note 'For this next test, C<array> is defined as C<[10,62,14,257,65,32]>';

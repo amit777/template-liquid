@@ -837,6 +837,7 @@ sub size {
 
 =head2 C<slice>
 
+String Processing:
 Returns a substring of 1 character beginning at the index specified by the
 first argument. An optional second argument specifies the length of the
 substring to be returned.
@@ -852,12 +853,40 @@ end of the string:
 
   {{ "Liquid" | slice: -3, 2 }} => ui
 
+Array Processing:
+Also works with arrays
+
+
 =cut
 
 sub slice {
-    my ($x, $pos, $len) = @_;
-    $len = 1 unless defined $len;
-    substr $x, $pos, $len;
+  my ($x, $pos, $len) = @_;
+  $len = 1 unless defined $len;
+
+  if(ref $x eq "ARRAY") {
+    my @array = @$x;
+
+    # Handle negative indices
+    $pos = scalar(@array) + $pos if $pos < 0;
+
+    # If pos is out of bounds, return an empty list
+    return () if $pos < 0 || $pos >= scalar(@array);
+
+    # If len is undefined, take everything from pos
+    $len = scalar(@array) - $pos unless defined $len;
+
+    # Ensure len does not exceed array bounds
+    $len = scalar(@array) - $pos if $pos + $len > scalar(@array);
+
+    # Slice and return the result
+    # print STDERR Dumper(@array[$pos .. $pos + $len - 1]);
+    # return array reference
+    return [ @array[$pos .. $pos + $len - 1] ];
+
+  }
+
+  # return string
+  substr $x, $pos, $len;
 }
 
 =head2 C<sort>
