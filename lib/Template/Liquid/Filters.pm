@@ -532,6 +532,7 @@ string. It does not affect spaces between words.
 
 sub lstrip {
     my ($x) = @_;
+    $x = $x // "";
     $x =~ s[^\s*][];
     $x;
 }
@@ -799,6 +800,7 @@ string. It does not affect spaces between words.
 
 sub rstrip {
     my ($x) = @_;
+    $x = $x // "";
     $x =~ s[\s*$][];
     $x;
 }
@@ -995,6 +997,7 @@ right sides of a string. It does not affect spaces between words.
 
 sub strip {
     my ($x) = @_;
+    $x = $x // "";
     $x =~ s[^\s+|\s+$][]g;
     $x;
 }
